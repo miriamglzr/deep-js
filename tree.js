@@ -1,22 +1,22 @@
 const nameItems = require("./name-items.json");
 
-const tree = function (nameItems, count = 0) {
-	//for every name item in the object
-	for (name in nameItems) {
-		//if the name item has a childern
-		if (count)
-			console.log("  " + nameItems["items"] ? "└──" : "├──", nameItems["name"]);
-		else console.log(nameItems["name"]);
-		if (nameItems["items"]) {
-			count++;
-			return nameItems["items"].forEach((child) => tree(child, count++));
-		}
-		//if the name item has no children
-		else {
-			console.log("│");
-		}
-	}
-};
+function tree(nameItems) {
+	const recur = ({ name, items }) =>
+		name +
+		(items?.length
+			? "\n" +
+			  items
+					.map(recur)
+					.map((text, i, { length }) =>
+						i < length - 1
+							? "├──" + text.replace(/\n/g, "\n│  ")
+							: "└──" + text.replace(/\n/g, "\n   ")
+					)
+					.join("\n")
+			: "");
+	return nameItems.map(recur).join("\n");
+}
 
 console.log(tree(nameItems));
+
 module.exports = tree;
