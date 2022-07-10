@@ -1,15 +1,15 @@
 const path = require("path");
 const fs = require("fs");
 
-const listFiles = (dir) => {
-	fs.readdir(path.join(__dirname, dir), (err, files) => {
-		if (dir[0] === ".") console.log(dir);
-		if (err) {
-		} else if (files.length) {
-			files.forEach((file) => {
-				console.log(" └──", file);
-				listFiles(file);
+const listFiles = (file, depth = 0) => {
+	fs.stat(file, (err, stats) => {
+		if (stats.isDirectory()) {
+			console.log(" ".repeat(depth) + " -> " + file + " dir");
+			fs.readdir(file, (err, files) => {
+				files.forEach((child) => listFiles(`${file}/${child}`, depth + 1));
 			});
+		} else {
+			console.log(" ".repeat(depth) + " -- " + file + " file");
 		}
 	});
 };
